@@ -4,7 +4,7 @@ use std::fs::File;
 pub fn solve() -> () {
     let file = File::open("./input/day02.csv").unwrap();
     let input = _reader::read_program(file);
-    println!("First solution: {}", p_one( input.clone()));
+    println!("First solution: {}", p_one(input.clone()));
     println!("Second solution: {:?}", p_two(input.clone()));
 }
 
@@ -36,11 +36,11 @@ fn execute(input: &mut Vec<i32>) -> i32 {
             }
             1 => {
                 let (t, lhs, rhs) = get_addresses(&input, ip);
-                input[t as usize] = input[lhs as usize] + input[rhs as usize];
+                input[t] = input[lhs] + input[rhs];
             }
             2 => {
                 let (t, lhs, rhs) = get_addresses(&input, ip);
-                input[t as usize] = input[lhs as usize] * input[rhs as usize];
+                input[t] = input[lhs] * input[rhs];
             }
             _ => println!("FUCK"),
         }
