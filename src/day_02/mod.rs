@@ -3,19 +3,20 @@ use std::fs::File;
 
 pub fn solve() -> () {
     let file = File::open("./input/day02.csv").unwrap();
-    let input = _reader::read_line(file);
-    println!("First solution: {}", p_one(&input));
-    println!("Second solution: {:?}", p_two(&input));
+    let input = _reader::read_program(file);
+    println!("First solution: {}", p_one( input.clone()));
+    println!("Second solution: {:?}", p_two(input.clone()));
 }
 
-fn p_one(input: &Vec<Vec<i32>>) -> i32 {
-    execute(&mut init_memory(input, 12, 2))
+fn p_one(mut input: Vec<i32>) -> i32 {
+    execute(init_memory(&mut input, 12, 2))
 }
 
-fn p_two(input: &Vec<Vec<i32>>) -> (i32, i32) {
+fn p_two(input: Vec<i32>) -> (i32, i32) {
     for i in 0..100 {
         for j in 0..100 {
-            let mut memory = init_memory(&input.clone(), i, j);
+            let mut base = input.clone();
+            let mut memory = init_memory(&mut base, i, j);
             if execute(&mut memory) == 19690720 {
                 return (i, j);
             }
@@ -55,9 +56,8 @@ fn get_addresses(input: &Vec<i32>, ip: usize) -> (usize, usize, usize) {
     )
 }
 
-fn init_memory(input: &Vec<Vec<i32>>, noun: i32, verb: i32) -> Vec<i32> {
-    let mut memory = input[0].clone();
-    memory[1] = noun;
-    memory[2] = verb;
-    memory
+fn init_memory(input: &mut Vec<i32>, noun: i32, verb: i32) -> &mut Vec<i32> {
+    input[1] = noun;
+    input[2] = verb;
+    input
 }

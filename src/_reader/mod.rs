@@ -10,9 +10,10 @@ pub fn read_lines(input: File) -> Vec<i32> {
         .collect()
 }
 
-pub fn read_line(input: File) -> Vec<Vec<i32>> {
+pub fn read_program(input: File) -> Vec<i32> {
     let br = BufReader::new(input);
-    br.lines()
+    let lines: Vec<Vec<i32>> = br
+        .lines()
         .filter_map(io::Result::ok)
         .map(|line| {
             line.split(",")
@@ -21,5 +22,7 @@ pub fn read_line(input: File) -> Vec<Vec<i32>> {
                 .map(|v| v.parse().unwrap())
                 .collect()
         })
-        .collect()
+        .collect();
+
+    lines[0].clone()
 }
