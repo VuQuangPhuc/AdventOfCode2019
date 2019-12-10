@@ -1,11 +1,8 @@
-use crate::_reader;
-use std::fs::File;
-
 pub fn solve() -> () {
-    let file = File::open("./input/day02.csv").unwrap();
-    let input = _reader::read_program(file);
-    println!("First solution: {}", p_one(input.clone()));
-    println!("Second solution: {:?}", p_two(input.clone()));
+    let input = include_str!("../../input/day02.csv");
+    let program = parse_input(&mut input.to_string());
+    println!("First solution: {}", p_one(program.clone()));
+    println!("Second solution: {:?}", p_two(program.clone()));
 }
 
 fn p_one(mut input: Vec<i32>) -> i32 {
@@ -24,6 +21,25 @@ fn p_two(input: Vec<i32>) -> (i32, i32) {
     }
 
     return (0, 0);
+}
+
+fn parse_input(mut input: &mut String) -> Vec<i32> {
+    trim_newline(&mut input);
+    input
+        .split(",")
+        .collect::<Vec<&str>>()
+        .iter()
+        .map(|v| v.parse().unwrap())
+        .collect()
+}
+
+fn trim_newline(s: &mut String) {
+    if s.ends_with('\n') {
+        s.pop();
+        if s.ends_with('\r') {
+            s.pop();
+        }
+    }
 }
 
 fn execute(input: &mut Vec<i32>) -> i32 {
