@@ -1,6 +1,7 @@
 mod day_01;
 mod day_02;
 mod day_03;
+mod day_04;
 
 use std::env;
 
@@ -17,6 +18,9 @@ fn main() {
         },
         "3" => {
             day_03::solve();
+        },
+        "4" => {
+            day_04::solve();
         }
         _ => {}
     }
