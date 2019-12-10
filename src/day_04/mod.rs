@@ -1,24 +1,16 @@
 use std::collections::HashSet;
+use std::iter::FromIterator;
 
 pub fn solve() {
-    println!("Solution 1: {:?}", not_brute_force());
+    println!("Solution 1: {:?}", p_one());
+    println!("Solution 2: {:?}", p_two());
 }
-
-
-fn p_two() -> i32 {
-    more_brute_force()
-}
-
-fn not_brute_force() -> i32 {
+fn p_one() -> i32 {
     let limit = 576723;
     let mut hits = 0;
     let mut password = 109165;
     while password < limit {
-        let mut digits: Vec<u32> = password
-            .to_string()
-            .chars()
-            .map(|c| c.to_digit(10).unwrap())
-            .collect();
+        let mut digits: Vec<u32> = split(password);
         make_inc(&mut digits);
         password = back(&digits);
         if password > limit {
@@ -31,6 +23,43 @@ fn not_brute_force() -> i32 {
     }
 
     hits
+}
+
+fn p_two() -> i32 {
+    let limit = 576723;
+    let mut hits = 0;
+    let mut password = 109165;
+    while password < limit {
+        let mut digits: Vec<u32> = split(password);
+        make_inc(&mut digits);
+        password = back(&digits);
+        if password > limit {
+            break;
+        }
+        let occurences: Vec<usize> = get_occurences(&digits);
+        if occurences.iter().filter(|o| **o == 2).count() >= 1 {
+            hits = hits + 1;
+        }
+        password = password + 1;
+    }
+
+    hits
+}
+
+fn get_occurences(digits: &Vec<u32>) -> Vec<usize> {
+    let unique: HashSet<&u32> = HashSet::from_iter(digits.iter().clone());
+    unique
+        .iter()
+        .map(|e| digits.iter().filter(|d| **d == **e).count())
+        .collect()
+}
+
+fn split(password: u32) -> Vec<u32> {
+    password
+        .to_string()
+        .chars()
+        .map(|c| c.to_digit(10).unwrap())
+        .collect()
 }
 
 fn make_inc(digits: &mut Vec<u32>) {
@@ -59,41 +88,4 @@ fn back(digits: &Vec<u32>) -> u32 {
         + digits[3] * 100
         + digits[4] * 10
         + digits[5]
-}
-
-fn more_brute_force() -> i32 {
-    let mut hits = 0;
-    for i in 109165..576723 {
-        let arr: Vec<u32> = i
-            .to_string()
-            .chars()
-            .map(|c| c.to_digit(10).unwrap())
-            .collect();
-        let mut not_decreasing = true;
-        let mut adjacent = false;
-        let mut seen: HashSet<u32> = HashSet::new();
-        for j in 0..5 {
-            if arr[j] > arr[j + 1] {
-                not_decreasing = false;
-            }
-            if arr[j] == arr[j + 1] {
-                if j != 5 && seen.insert(arr[j]) {
-                    let mut count = 1;
-                    for k in j + 1..6 {
-                        if arr[k] == arr[j] {
-                            count = count + 1;
-                        }
-                    }
-                    if count == 2 {
-                        adjacent = true;
-                    }
-                }
-            }
-        }
-        if not_decreasing && adjacent {
-            hits = hits + 1;
-        }
-    }
-
-    hits
 }
