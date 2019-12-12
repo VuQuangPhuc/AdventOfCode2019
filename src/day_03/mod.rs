@@ -72,6 +72,25 @@ fn p_two(wires: &Vec<Vec<Instruction>>) -> i32 {
     result[0]
 }
 
+fn distance(point: &Point) -> i32 {
+    point.x.abs() + point.y.abs()
+}
+
+fn execute(dimension: &mut i32, difference: i32, steps: &mut i32) {
+    *dimension += difference;
+    *steps += 1;
+}
+
+fn insert(
+    position: Point,
+    steps: i32,
+    set: &mut HashSet<Point>,
+    step_map: &mut HashMap<Point, i32>,
+) {
+    set.insert(position);
+    step_map.insert(position, steps);
+}
+
 fn parse_input(input: &str) -> Vec<Vec<Instruction>> {
     input
         .lines()
@@ -79,13 +98,7 @@ fn parse_input(input: &str) -> Vec<Vec<Instruction>> {
         .collect()
 }
 
-fn parse_path_instruction(instruction: &str) -> Instruction {
-    let direction = instruction.chars().next().unwrap();
-    let distance = instruction[1..].parse().unwrap();
-    Instruction::new(direction, distance)
-}
-
-fn parse_path<'a>(wire: &Vec<Instruction>, mut set: &mut HashSet<Point>) -> HashMap<Point, i32> {
+fn parse_path(wire: &Vec<Instruction>, mut set: &mut HashSet<Point>) -> HashMap<Point, i32> {
     let mut pos = Point::new(0, 0);
     let mut steps = 0;
     let mut step_map: HashMap<Point, i32> = HashMap::new();
@@ -122,21 +135,8 @@ fn parse_path<'a>(wire: &Vec<Instruction>, mut set: &mut HashSet<Point>) -> Hash
     step_map
 }
 
-fn execute(dimension: &mut i32, difference: i32, steps: &mut i32) {
-    *dimension += difference;
-    *steps += 1;
-}
-
-fn insert(
-    position: Point,
-    steps: i32,
-    set: &mut HashSet<Point>,
-    step_map: &mut HashMap<Point, i32>,
-) {
-    set.insert(position);
-    step_map.insert(position, steps);
-}
-
-fn distance(point: &Point) -> i32 {
-    point.x.abs() + point.y.abs()
+fn parse_path_instruction(instruction: &str) -> Instruction {
+    let direction = instruction.chars().next().unwrap();
+    let distance = instruction[1..].parse().unwrap();
+    Instruction::new(direction, distance)
 }

@@ -30,24 +30,6 @@ fn p_two(input: Vec<i32>) -> (i32, i32) {
     return (0, 0);
 }
 
-fn parse_input(mut input: &mut String) -> Vec<i32> {
-    trim_newline(&mut input);
-    input
-        .split(",")
-        .collect::<Vec<&str>>()
-        .iter()
-        .map(|v| v.parse().unwrap())
-        .collect()
-}
-
-fn trim_newline(s: &mut String) {
-    if s.ends_with('\n') {
-        s.pop();
-        if s.ends_with('\r') {
-            s.pop();
-        }
-    }
-}
 
 fn execute(input: &mut Vec<i32>) -> i32 {
     let mut ip = 0;
@@ -83,4 +65,24 @@ fn init_memory(input: &mut Vec<i32>, noun: i32, verb: i32) -> &mut Vec<i32> {
     input[1] = noun;
     input[2] = verb;
     input
+}
+
+
+fn parse_input(mut input: &mut String) -> Vec<i32> {
+    trim_newline(&mut input);
+    input
+        .split(",")
+        .collect::<Vec<&str>>()
+        .iter()
+        .map(|v| v.parse().unwrap())
+        .collect()
+}
+
+fn trim_newline(s: &mut String) {
+    if s.ends_with('\n') {
+        s.pop();
+        if s.ends_with('\r') {
+            s.pop();
+        }
+    }
 }

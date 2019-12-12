@@ -13,7 +13,7 @@ fn p_one() -> i32 {
     while password < limit {
         let mut digits: Vec<u32> = split(password);
         make_inc(&mut digits);
-        password = back(&digits);
+        password = revert_to_number(&digits);
         if password > limit {
             break;
         }
@@ -33,7 +33,7 @@ fn p_two() -> i32 {
     while password < limit {
         let mut digits: Vec<u32> = split(password);
         make_inc(&mut digits);
-        password = back(&digits);
+        password = revert_to_number(&digits);
         if password > limit {
             break;
         }
@@ -55,12 +55,13 @@ fn get_occurences(digits: &Vec<u32>) -> Vec<usize> {
         .collect()
 }
 
-fn split(password: u32) -> Vec<u32> {
-    password
-        .to_string()
-        .chars()
-        .map(|c| c.to_digit(10).unwrap())
-        .collect()
+fn has_double(digits: &Vec<u32>) -> bool {
+    for i in 0..5 {
+        if digits[i] == digits[i + 1] {
+            return true;
+        };
+    }
+    false
 }
 
 fn make_inc(digits: &mut Vec<u32>) {
@@ -73,16 +74,7 @@ fn make_inc(digits: &mut Vec<u32>) {
     }
 }
 
-fn has_double(digits: &Vec<u32>) -> bool {
-    for i in 0..5 {
-        if digits[i] == digits[i + 1] {
-            return true;
-        };
-    }
-    false
-}
-
-fn back(digits: &Vec<u32>) -> u32 {
+fn revert_to_number(digits: &Vec<u32>) -> u32 {
     digits[0] * 100000
         + digits[1] * 10000
         + digits[2] * 1000
@@ -90,3 +82,12 @@ fn back(digits: &Vec<u32>) -> u32 {
         + digits[4] * 10
         + digits[5]
 }
+
+fn split(password: u32) -> Vec<u32> {
+    password
+        .to_string()
+        .chars()
+        .map(|c| c.to_digit(10).unwrap())
+        .collect()
+}
+
