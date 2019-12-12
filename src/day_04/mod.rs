@@ -5,6 +5,7 @@ pub fn solve() {
     println!("Solution 1: {:?}", p_one());
     println!("Solution 2: {:?}", p_two());
 }
+
 fn p_one() -> i32 {
     let limit = 576723;
     let mut hits = 0;

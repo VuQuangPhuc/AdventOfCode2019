@@ -10,13 +10,20 @@ fn p_one(mut input: Vec<i32>) -> i32 {
 }
 
 fn p_two(input: Vec<i32>) -> (i32, i32) {
+    let mut tmp = 0;
     for i in 0..100 {
-        for j in 0..100 {
-            let mut base = input.clone();
-            let mut memory = init_memory(&mut base, i, j);
-            if execute(&mut memory) == 19690720 {
-                return (i, j);
-            }
+        let mut base = input.clone();
+        let mut memory = init_memory(&mut base, i, 0);
+        if execute(&mut memory) > 19690720 {
+            tmp = i - 1;
+            break;
+        }
+    }
+    for j in 0..100 {
+        let mut base = input.clone();
+        let mut memory = init_memory(&mut base, tmp, j);
+        if execute(&mut memory) == 19690720 {
+            return (tmp, j);
         }
     }
 
