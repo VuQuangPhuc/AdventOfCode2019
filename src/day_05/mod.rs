@@ -1,173 +1,36 @@
+use _solver::Solver;
+
 pub fn solve() {
-    let mut solver = Solver::new();
-    solver.solve();
+    let input = include_str!("../../input/day05.csv");
+    let mut p_one = Solver::new(input, vec![1]);
+    p_one.solve();
+
+    let mut p_two = Solver::new(input, vec![5]);
+    p_two.solve();
 }
 
-enum Mode {
-    POSITION,
-    IMMEDIATE,
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-struct Param {
-    mode: Mode,
-    value: i64,
-}
-
-impl Param {
-    pub fn new(value: i64, mode: i64) -> Param {
-        let mode = match mode {
-            0 => Mode::POSITION,
-            1 => Mode::IMMEDIATE,
-            _ => panic!("Unknown mode: {}", mode),
-        };
-
-        Param { mode, value }
-    }
-}
-
-enum Instruction {
-    ADD((Param, Param, Param)),
-    MULT((Param, Param, Param)),
-    INPUT((Param)),
-    OUTPUT((Param)),
-    STOP,
-}
-
-struct Solver {
-    // instruction_set: Vec<i64>,
-    computer: Computer,
-}
-
-impl Solver {
-    pub fn new() -> Solver {
-        let input = include_str!("../../input/day05.csv");
-        let instruction_set = Solver::parse_input(&mut input.to_string());
-
-        Solver {
-            computer: Computer::new(&instruction_set, vec![]),
-            // instruction_set,
-        }
+    #[test]
+    fn first() {
+        let input = "3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9";
+        let mut solver = Solver::new(input, vec![5]);
+        solver.solve()
     }
 
-    pub fn solve(&mut self) -> () {
-        self.computer.execute();
-        self.computer.emit_output();
+    #[test]
+    fn second() {
+        let input = "3,3,1105,5,9,1101,0,0,12,4,12,99,1";
+        let mut solver = Solver::new(input, vec![5]);
+        solver.solve()
     }
 
-    fn parse_input(mut input: &mut String) -> Vec<i64> {
-        Solver::trim_newline(&mut input);
-        input
-            .split(",")
-            .collect::<Vec<&str>>()
-            .iter()
-            .map(|v| v.parse().unwrap())
-            .collect()
-    }
-
-    fn trim_newline(s: &mut String) {
-        if s.ends_with('\n') {
-            s.pop();
-            if s.ends_with('\r') {
-                s.pop();
-            }
-        }
-    }
-}
-
-struct Computer {
-    program: Vec<i64>,
-    input: Vec<i64>,
-    ip: usize,
-    output: Option<i64>,
-}
-
-impl Computer {
-    pub fn new(program: &Vec<i64>, input: Vec<i64>) -> Computer {
-        let mut c = Computer {
-            input,
-            program: program.clone(),
-            ip: 0,
-            output: None,
-        };
-        c.set_input();
-        c
-    }
-
-    pub fn execute(&mut self) -> () {
-        loop {
-            let instruction = self.get_instruction();
-            match instruction {
-                Instruction::STOP => {
-                    return;
-                }
-                Instruction::ADD((target, lhs, rhs)) => {
-                    let lhs = self.get_value(lhs);
-                    let rhs = self.get_value(rhs);
-                    self.set_value(target, lhs + rhs);
-                }
-                Instruction::MULT((target, lhs, rhs)) => {
-                    let lhs = self.get_value(lhs);
-                    let rhs = self.get_value(rhs);
-                    self.set_value(target, lhs * rhs);
-                }
-                Instruction::INPUT(target) => {
-                    self.set_value(target, 1);
-                }
-                Instruction::OUTPUT(target) => {
-                    self.output = Some(self.get_value(target));
-                }
-            }
-        }
-    }
-
-    pub fn emit_output(&self) -> () {
-        println!("Output: {}", self.output.unwrap());
-    }
-
-    fn fetch_params_1(&mut self, instruction: i64) -> Param {
-        let base = self.ip;
-        self.ip += 2;
-
-        let mode = (instruction / 100) % 10;
-        Param::new(self.program[base + 1], mode)
-    }
-
-    fn fetch_params_3(&mut self, instruction: i64) -> (Param, Param, Param) {
-        let base = self.ip;
-        self.ip += 4;
-        let mode = instruction / 100;
-        let op1 = Param::new(self.program[base + 1], mode % 10);
-        let op2 = Param::new(self.program[base + 2], (mode / 10) % 10);
-        let t = Param::new(self.program[base + 3], (mode / 10) % 10);
-        (t, op1, op2)
-    }
-
-    fn get_instruction(&mut self) -> Instruction {
-        let instruction = self.program[self.ip];
-        let opcode = instruction % 100;
-        match opcode {
-            1 => Instruction::ADD(self.fetch_params_3(instruction)),
-            2 => Instruction::MULT(self.fetch_params_3(instruction)),
-            3 => Instruction::INPUT(self.fetch_params_1(instruction)),
-            4 => Instruction::OUTPUT(self.fetch_params_1(instruction)),
-            99 => Instruction::STOP,
-            _ => panic!("Unknown Instruction {}", opcode),
-        }
-    }
-
-    fn get_value(&self, param: Param) -> i64 {
-        match param.mode {
-            Mode::IMMEDIATE => param.value,
-            Mode::POSITION => self.program[param.value as usize],
-        }
-    }
-    fn set_input(&mut self) -> () {
-        for i in 0..self.input.len() {
-            self.program[i + 1] = self.input[i]
-        }
-    }
-
-    fn set_value(&mut self, target: Param, value: i64) -> () {
-        self.program[target.value as usize] = value;
+    #[test]
+    fn third() {
+        let input = "3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99";
+        let mut solver = Solver::new(input, vec![5]);
+        solver.solve()
     }
 }
